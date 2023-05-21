@@ -1,9 +1,9 @@
 /*
  * Author: Dylan Johnson
  * Date: 5/21/23
- * Class: CSS222
+ * Class: CSS422
  * Assignment: Pet Database
- * Description: Pets Database
+ * Description: Pet Database and connecting with GitHub
 */
 
 package com.mycompany.petdatabase;
