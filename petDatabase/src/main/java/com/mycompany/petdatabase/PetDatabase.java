@@ -49,8 +49,7 @@ public class PetDatabase {
 		System.out.println("2) Add more pets");
 //		System.out.println("3) Update an existing pet");
 //		System.out.println("4) Remove an existing pet");
-//		System.out.println("5) Search pets by name");
-//		System.out.println("6) Search pets by age");
+s
 		System.out.println("7) Exit program\n");
 		System.out.print("Your choice: ");
 		int choice = input.nextInt();
