@@ -10,9 +10,7 @@ package com.mycompany.petdatabase;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class PetDatabase {//Was this supposed to be called PetDatabase? I would not have been able to call the file the required name if so?
-							  //Or was it supposed to be in a different class and only have the main element in this section? Wasn't sure so I went with it this way.
-							  //I can modify to whatever the instructions are needed to be but ran out of time at this point to make any changes.
+public class PetDatabase {
 	public static Scanner input = new Scanner(System.in);//global scanner access
 	public static ArrayList<Pet> Pets = new ArrayList<>();//global array access
 	public static int numOfPets;//global access to number of pets
