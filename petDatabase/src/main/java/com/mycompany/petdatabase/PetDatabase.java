@@ -1,9 +1,9 @@
 /*
  * Author: Dylan Johnson
- * Date: 10/20/22
- * Class: CSS222
- * Assignment: Program 6
- * Description: Pets Copier and exceptions
+ * Date: 5/23/23
+ * Class: CSS422
+ * Assignment: Pet Database
+ * Description: Pet Database and connecting with GitHub
  */
 
 package com.mycompany.petdatabase;
