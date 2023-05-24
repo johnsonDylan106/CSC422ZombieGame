@@ -40,7 +40,7 @@ public class PetDatabase {
 
 
 
-	public static int menu() {//Should've been getUserChoice but I felt menu was more appropriate
+	public static int menu() {
 		System.out.println("\n\nWhat would you like to do?");
 		System.out.println(" 1) View all pets");
 		System.out.println(" 2) Add new pets");
@@ -106,7 +106,8 @@ public class PetDatabase {
 			System.out.print("add pet (name, age): ");
 			newPet = input.nextLine();
 			String[] data;
-			if (!(newPet.equalsIgnoreCase("done"))) {//if not done, add new item
+                        int newEntry = 0;
+			if (!(newPet.equalsIgnoreCase("done")) || newEntry > 5) {//if not done, add new item
 				try {
 					data = newPet.split(" ");//splits the input by a space
 					if (data.length != 2) {
