@@ -1,12 +1,17 @@
 /*
  * Author: Dylan Johnson
- * Date: 5/21/23
- * Class: CSS422
- * Assignment: Pet Database
- * Description: Pet Database and connecting with GitHub
-*/
+ * Date: 10/20/22
+ * Class: CSS222
+ * Assignment: Program 6
+ * Description: Pets Copier and exceptions
+ */
 
 package com.mycompany.petdatabase;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,45 +19,34 @@ public class PetDatabase {
 	public static Scanner input = new Scanner(System.in);//global scanner access
 	public static ArrayList<Pet> Pets = new ArrayList<>();//global array access
 	public static int numOfPets;//global access to number of pets
+	public static int CAPACITY = 15;
 	
 	public static void main(String[] args) {
 		System.out.println("Pet Database Program");
-		//My sample pet data---------------
-		Pets.add(new Pet("Ryder", 11));
-		Pets.add(new Pet("Ziva", 5));
-		Pets.add(new Pet("Greta", 2));
-		Pets.add(new Pet("Nelly", 1));
-		Pets.add(new Pet("Frank", 10));
-		Pets.add(new Pet("Pickles", 3));
-		Pets.add(new Pet("Nico", 3));
-		Pets.add(new Pet("Binx", 3));
-		Pets.add(new Pet("Jethro", 9));
-		Pets.add(new Pet("Teddy", 3));
-		Pets.add(new Pet("Louie", 1));
-		Pets.add(new Pet("Jabber", 6));
-		Pets.add(new Pet("Cocka", 1));
-		Pets.add(new Pet("Sugar", 8));
-		//----------------------------------
 		int choice;//initialized for do/while loop
+		
+		loadDatabase();
 		
 		do {
 			choice = menu();
 			execute(choice);
-		}while(choice != 7);
+		}while(choice != 4);
+		
+		saveDatabase();
+		input.close();
 
 
 	}
 
+
+
 	public static int menu() {//Should've been getUserChoice but I felt menu was more appropriate
 		System.out.println("\n\nWhat would you like to do?");
-		System.out.println("1) View all pets");
-		System.out.println("2) Add more pets");
-		System.out.println("3) Update an existing pet");
-		System.out.println("4) Remove an existing pet");
-		System.out.println("5) Search pets by name");
-		System.out.println("6) Search pets by age");
-		System.out.println("7) Exit program\n");
-		System.out.print("Your choice: ");
+		System.out.println(" 1) View all pets");
+		System.out.println(" 2) Add new pets");
+		System.out.println(" 3) Remove a pet");
+		System.out.println(" 4) Exit Program");
+		System.out.print("Your Choice: ");
 		int choice = input.nextInt();
 		input.nextLine();
 		System.out.println();
@@ -68,23 +62,9 @@ public class PetDatabase {
 				addPets();
 				break;
 			case 3:
-				updatePet(0);
+				removePet();
 				break;
 			case 4:
-				updatePet(1);
-				break;
-			case 5:
-				System.out.print("Enter name to search: ");
-				String name = input.nextLine();
-				showAllPets(1, name, 0);
-				break;
-			case 6:
-				System.out.print("Enter age to search: ");
-				int age = input.nextInt();
-				input.nextLine();
-				showAllPets(2, null, age);
-				break;
-			case 7:
 				System.out.println("Goodbye!");
 				break;
 			default:
@@ -94,24 +74,67 @@ public class PetDatabase {
 
 	
 	public static int petCount() {
-		return numOfPets;
+		return numOfPets;//returns the amount of pets in the database
+	}
+	
+	//adds items to the Pets array------------------------------------------------------------------------------
+	private static void loadDatabase() {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("pets.txt"));
+			String line;
+			while((line = reader.readLine()) != null) {
+				try {
+					String[] lineItem = line.split(" ");
+					if (lineItem.length != 2) {
+						throw new InvalidArgumentException();
+					}else {
+						addPet(lineItem);
+					}
+				} catch (InvalidArgumentException | ArrayIndexOutOfBoundsException AIOB) {
+					System.out.println("InvalidArgumentException: " + line + " is not valid input.");
+				}
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	//adds items to the Pets array----------------------------------------------------
 	private static void addPets() {
 		String newPet = "";
 		do {
 			System.out.print("add pet (name, age): ");
 			newPet = input.nextLine();
+			String[] data;
 			if (!(newPet.equalsIgnoreCase("done"))) {//if not done, add new item
-				String[] data = newPet.split(" ");//splits the input by a space 
-				int age = Integer.parseInt(data[1]);//makes the age an integer
-				Pets.add(new Pet(data[0], age));//adds to the array
-				numOfPets++;//shows the number of pets
+				try {
+					data = newPet.split(" ");//splits the input by a space
+					if (data.length != 2) {
+						throw new InvalidArgumentException();
+					}else {
+						addPet(data);
+					}
+				} catch (InvalidArgumentException | ArrayIndexOutOfBoundsException AIOB) {
+					System.out.println("InvalidArgumentException: " + newPet + " is not valid input.");
+				}
 			}
 		}while(!(newPet.equalsIgnoreCase("done")));//adds data until the user is done
 	}
-	//---------------------------------------------------------------------------------
+
+	private static void addPet(String[] data) {
+		try {
+			if (petCount() == CAPACITY) {
+				throw new FullDatabaseException();
+			} else {
+				numOfPets++;//shows the number of pets	
+				int age = Integer.parseInt(data[1]);//makes the age an integer
+				Pets.add(new Pet(data[0], age));//adds to the array
+			} 
+		} catch (FullDatabaseException FDE) {
+			System.out.println("FullDatabaseException: Database is full.");
+		}
+	}
+	//----------------------------------------------------------------------------------------------------------
 	
 	//All how the table is printed--------------------------------------------------------------
 	private static void showAllPets(int choice, String name, int age) {
@@ -166,31 +189,43 @@ public class PetDatabase {
 	//------------------------------------------------------------------------------------------
 	
 	//Any modifications to the Pets array happens here--------------------------------------------------------------
-	private static void updatePet(int choice) {//choice int allows for the difference between update and remove
+	private static void removePet() {//choice int allows for the difference between update and remove
 							 				   //Instructions didn't have different method name for remove and
 											   ///update so incorporated it all here. 	
 		showAllPets(0, null, 0);
-		if (choice == 0) {
-			System.out.print("Enter the ID of the pet you would like to update: ");
-		}else if (choice == 1) {
+		while (true) {
 			System.out.print("Enter the pet ID to remove: ");
-		}
-		int petID = input.nextInt();
-		input.nextLine();
-		if (choice == 0) {//updates record
-			System.out.print("Enter new name and age: ");
-			String name = input.next();
-			int age = input.nextInt();
-			System.out.print(Pets.get(petID).getName() + " " + Pets.get(petID).getAge() + " changed to ");
-			Pets.get(petID).setName(name);
-			Pets.get(petID).setAge(age);
-			System.out.println(Pets.get(petID).getName() + " " + Pets.get(petID).getAge());
-		}else if (choice == 1) {//deletes record
-			System.out.println(Pets.get(petID).getName() + " " + Pets.get(petID).getAge() + " has been removed.");
-			Pets.remove(Pets.get(petID));
+			int petID = input.nextInt();
+			input.nextLine();
+			try {
+				if(petID < 0 || petID > numOfPets-1) {
+					throw new InvalidIDException();
+				}else {
+					System.out.println(Pets.get(petID).getName() + " " + Pets.get(petID).getAge() + " has been removed.");
+					Pets.remove(Pets.get(petID));
+					break;					
+				}
+			} catch (InvalidIDException IIE) {
+				System.out.println("InvalidIDException: ID " + petID + " does not exist.");
+			}
 		}
 	}
 	//----------------------------------------------------------------------------------------------------------------
+	//Saves the database to a text file--------------------------------------------------
+	private static void saveDatabase() {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("pets.txt"));
+			for (Pet value: Pets) {
+				writer.write(value.getName() + " " + value.getAge());
+				writer.write("\n");
+			}
+			
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	//-----------------------------------------------------------------------------------
 	
 	
 }
@@ -201,8 +236,8 @@ class Pet {
 	private int age;
 	
 	public Pet(String name, int age) {
-		this.name = name;
-		this.age = age;
+		setName(name);
+		setAge(age);
 	}
 	
 	public String getName() {
@@ -218,9 +253,31 @@ class Pet {
 	}
 	
 	public void setAge(int age) {
-		this.age = age;
+		while(true) {
+			try {
+				if (age < 1 || age > 20) {
+					throw new InvalidAgeException();
+				}else {
+					this.age = age;
+					break;
+				}
+			}catch(InvalidAgeException IAE) {
+				System.out.println(age + " is not a valid age");
+				Scanner input = new Scanner(System.in);
+				System.out.print("Enter a valid age: ");
+				age = input.nextInt();
+				input.nextLine();
+			}
+		}
 	}
 	
 }
 //----------------------------------------------
+
+//custom exception-----------------------------------------
+class InvalidAgeException extends RuntimeException{} //Runtime to check as program is running not when compiling
+class InvalidArgumentException extends RuntimeException{} //Runtime to check as program is running not when compiling
+class InvalidIDException extends RuntimeException{}
+class FullDatabaseException extends RuntimeException{}
+//---------------------------------------------------------
 
