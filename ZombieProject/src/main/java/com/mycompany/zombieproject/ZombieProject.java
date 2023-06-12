@@ -100,9 +100,9 @@ public class ZombieProject {
             }
         }
         
-        System.out.println("There are " + numSurvivors + " survivors trying to make it to safety. ");//(" + numScientist + " scientists, " + numCivilian + " civilians, " + numSoldier + " soldiers)\n");
+        System.out.println("There are " + numSurvivors + " survivors trying to make it to safety. (" + numScientist + " scientists, " + numCivilian + " civilians, " + numSoldier + " soldiers)\n");
         
-        System.out.println("But there are " + numInfected + " zombies waiting for them.");// (" + numCom + " common infected and " + numTank + " tanks)\n");
+        System.out.println("But there are " + numInfected + " zombies waiting for them. (" + numCom + " common infected and " + numTank + " tanks)\n");
         
 //        for (Survivor sur : survivors) {
 //            System.out.println(sur.getName());
@@ -126,7 +126,7 @@ public class ZombieProject {
                     int health = inf.getHealth();
                     inf.setHealth(health - surv.getAttack());
                     if (inf.getHealth() <= 0) {
-                       //System.out.println(surv.getName() + " killed " + inf.getName());
+                       System.out.println(surv.getName() + " killed " + inf.getName());
                     } 
                 }
 
@@ -144,7 +144,7 @@ public class ZombieProject {
                     int health = surv.getHealth();
                     surv.setHealth(health - inf.getAttack());   
                     if (surv.getHealth() <= 0) {
-                        //System.out.println(inf.getName() + " killed " + surv.getName()); 
+                        System.out.println(inf.getName() + " killed " + surv.getName()); 
                         numSurvivorsLeft--;
                     }
                 }
